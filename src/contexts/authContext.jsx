@@ -8,12 +8,13 @@ export const AuthContext = createContext();
 export default function AuthProvider({ children }) {
 	const [authenticated, setAuthenticated] = useState(false);
 	const [roles, setRole] = useState(["amdin"]);
+	const [loggedInUserDetail, setLoggedInUserDetail] = useState({});
 
 	/**
 	 * Write the code for login logic here, if login is successful, set authenticated to true,
 	 * also set incoming user role
 	 */
-	
+
 	const login = async ({ email, password }) => {
 		const response = await axios.post("http://localhost:3100/auth/login", {
 			email,
@@ -21,17 +22,25 @@ export default function AuthProvider({ children }) {
 		});
 		if (response.status === 201) {
 			console.log("logged in ");
-			
+
 			if (response.data) {
 				console.log(response.data);
 				setAuthenticated(true);
+				console.log(response.data.user);
+				setLoggedInUserDetail({
+					id: response.data.user.id,
+					email: response.data.user.email,
+					roles: response.data.user.roles,
+					fullName: response.data.user.fullName,
+				});
+
+				localStorage.setItem("access_token", response.data.access_token);
 			}
-			Promise.resolve(true)
+			Promise.resolve(true);
 			// if (response.data.role) {
 			// 	setRole([...response.data.role]);
 			// }
-		}
-		else Promise.resolve(false)
+		} else Promise.resolve(false);
 	};
 
 	/**
@@ -49,7 +58,6 @@ export default function AuthProvider({ children }) {
 
 const useAuth = () => {
 	const { authenticated, roles, login, logout } = useContext(AuthContext);
-	console.log({ authenticated, roles, login, logout });
 	return { authenticated, roles, login, logout };
 };
 // eslint-disable-next-line react-refresh/only-export-components

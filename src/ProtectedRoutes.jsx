@@ -1,7 +1,7 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 // import PropTypes from "prop-types";
 
-const ProtectedRoute = ({ authenticated}) => {
+const ProtectedRoute = ({ authenticated, children }) => {
 	console.log(authenticated, "auth");
 	// const rolesNeeded = !!roles?.length;
 	// const incomingUserRole = ["amdin"];
@@ -13,7 +13,7 @@ const ProtectedRoute = ({ authenticated}) => {
 	if (!authenticated) {
 		return <Navigate to="/login" replace={true} />;
 	}
-	return <>{authenticated ? <Outlet/> : null} </>;
+	return <>{children}</>;
 };
 
 export default ProtectedRoute;
